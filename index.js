@@ -21,4 +21,16 @@ app.post('/sign-up',(req,res) => {
 })
 
 
+app.get('/tweets',(req,res) => {
+    console.log(req.body)
+    const array = tweetsArray.map((object)=>{return(
+        {username: object.username,
+        tweet: object.tweet,
+        avatar: usersArray.find((q)=>q.username==object.username).avatar})
+    })
+    console.log(array)
+    res.send(array);
+})
+
+
 app.listen(5000);
