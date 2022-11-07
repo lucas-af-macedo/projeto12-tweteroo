@@ -45,7 +45,6 @@ app.post('/sign-up',(req,res) => {
 
 app.post('/tweets',(req,res) => {
     const username = req.headers.user
-    console.log(username)
     const tweet = req.body.tweet
     const keysObject = Object.keys(req.body)
     const invalidKey = keysObject.find(e=>e!=='tweet')
@@ -55,7 +54,8 @@ app.post('/tweets',(req,res) => {
         username: username,
         tweet: tweet
     }
-    console.log(object)
+
+    
     if(!username || !tweet){
         res.status(422).send("Todos os campos são obrigatórios");
         return;
@@ -73,7 +73,6 @@ app.post('/tweets',(req,res) => {
         res.status(400).send('Formato inválido!')
         return;
     }
-
     if (invalidKey){
         res.status(400).send('Campo "'+invalidKey+'" inválido!')
         return;
@@ -92,11 +91,11 @@ app.get('/tweets:page?',(req,res) => {
     const pageArray = tweetsArray.slice(firstIndex,lastIndex)
 
     if (!page){
-        res.status(400).send('Informe uma página válida!Vazio')
+        res.status(400).send('Informe uma página válida!')
         return;
     }
     if (maxPage<page){
-        res.status(400).send('Informe uma página válida!Indice')
+        res.status(400).send('Informe uma página válida!')
         return;
     }
     
@@ -107,6 +106,19 @@ app.get('/tweets:page?',(req,res) => {
         avatar: usersArray.find((q)=>q.username==object.username).avatar})
     })
     
+    res.send(array);
+})
+
+app.get('/tweets/:username',(req,res) => {
+    const username = req.params.username
+    const userTweetArray = tweetsArray.filter(e=>e.username===username)
+    
+    const array = userTweetArray.map((object)=>{return(
+        {username: object.username,
+        tweet: object.tweet,
+        avatar: usersArray.find((q)=>q.username==object.username).avatar})
+    })
+
     res.send(array);
 })
 
