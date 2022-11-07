@@ -44,12 +44,13 @@ app.post('/sign-up',(req,res) => {
 
 
 app.post('/tweets',(req,res) => {
+    
+    console.log(req.headers.user)
     const {username,tweet} = req.body
     const keysObject = Object.keys(req.body)
     const invalidKey = keysObject.find(e=>e!=='username'&&e!=='tweet')
     const usernameIsString = req.body.username.constructor === String
     const tweetIsString = req.body.tweet.constructor === String
-
 
     if(!username || !tweet){
         res.status(422).send("Todos os campos são obrigatórios");
@@ -74,18 +75,29 @@ app.post('/tweets',(req,res) => {
         return;
     }
 
-
-    tweetsArray.push(req.body);
-    if (tweetsArray.length>10){
-        tweetsArray = tweetsArray.slice(1)
-    }
+    tweetsArray= [req.body,...tweetsArray]
     res.status(201).send('OK')
 })
 
 
-app.get('/tweets',(req,res) => {
-    console.log(usersArray)
-    const array = tweetsArray.map((object)=>{return(
+app.get('/tweets:page?',(req,res) => {
+    const page = Number(req.query.page)
+    const maxPage = Math.floor(tweetsArray.length/10)+1
+    const firstIndex = (page-1)*10
+    const lastIndex = page*10
+    const pageArray = tweetsArray.slice(firstIndex,lastIndex)
+
+    if (!page){
+        res.status(400).send('Informe uma página válida!Vazio')
+        return;
+    }
+    if (maxPage<page){
+        res.status(400).send('Informe uma página válida!Indice')
+        return;
+    }
+    
+    
+    const array = pageArray.map((object)=>{return(
         {username: object.username,
         tweet: object.tweet,
         avatar: usersArray.find((q)=>q.username==object.username).avatar})
