@@ -21,6 +21,22 @@ app.post('/sign-up',(req,res) => {
 })
 
 
+app.post('/tweets',(req,res) => {
+    const {username,tweet} = req.body
+
+    if(!username || !tweet){
+        res.status(422).send("Todos os campos são obrigatórios");
+        return;
+    }
+
+    tweetsArray.push(req.body);
+    if (tweetsArray.length>10){
+        tweetsArray = tweetsArray.slice(1)
+    }
+    res.status(201).send('OK')
+})
+
+
 app.get('/tweets',(req,res) => {
     console.log(req.body)
     const array = tweetsArray.map((object)=>{return(
