@@ -44,14 +44,18 @@ app.post('/sign-up',(req,res) => {
 
 
 app.post('/tweets',(req,res) => {
-    
-    console.log(req.headers.user)
-    const {username,tweet} = req.body
+    const username = req.headers.user
+    console.log(username)
+    const tweet = req.body.tweet
     const keysObject = Object.keys(req.body)
-    const invalidKey = keysObject.find(e=>e!=='username'&&e!=='tweet')
-    const usernameIsString = req.body.username.constructor === String
+    const invalidKey = keysObject.find(e=>e!=='tweet')
+    const usernameIsString = username.constructor === String
     const tweetIsString = req.body.tweet.constructor === String
-
+    const object = {
+        username: username,
+        tweet: tweet
+    }
+    console.log(object)
     if(!username || !tweet){
         res.status(422).send("Todos os campos são obrigatórios");
         return;
@@ -75,7 +79,7 @@ app.post('/tweets',(req,res) => {
         return;
     }
 
-    tweetsArray= [req.body,...tweetsArray]
+    tweetsArray= [object,...tweetsArray]
     res.status(201).send('OK')
 })
 
